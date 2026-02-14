@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 // connection of the rabbitMQ will be here
-import connectToRabbitMQ from './config/rabbitMQ.js';
+import {connectToRabbitMQ} from './config/rabbitMQ.js';
 connectToRabbitMQ();
 // connection of the database will be here
 import connectDB from './config/db.js';

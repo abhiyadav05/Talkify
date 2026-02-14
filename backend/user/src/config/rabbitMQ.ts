@@ -1,7 +1,10 @@
 import amqp from 'amqplib';
 import dotenv from 'dotenv';
+import { connection } from 'mongoose';
 dotenv.config();
- const connectToRabbitMQ = async () => {
+
+let channel:amqp.Channel;
+ export const connectToRabbitMQ = async () => {
     try {
         const connection = await amqp.connect({
             protocol: 'amqp',
@@ -11,11 +14,19 @@ dotenv.config();
             password : process.env.RABBITMQ_PASSWORD
         })
 
-        const channel = await connection.createChannel();
+         channel = await connection.createChannel();
         console.log("✅ Connected to RabbitMQ successfully!");
     } catch (error) {
         console.error("Error connecting to RabbitMQ:", error);
     }
 }
 
-export default connectToRabbitMQ;
+export const publishToQueue= async (queueName:string,message:any)=>{
+      if(!channel){
+        console.log("channel is not initialized");
+      }
+      await channel.assertQueue(queueName,{durable : true});
+      channel.sendToQueue(queueName,
+       Buffer.from(JSON.stringify(message)),
+        {persistent:true});
+}
