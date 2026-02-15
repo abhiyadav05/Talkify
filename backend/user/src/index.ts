@@ -11,9 +11,10 @@ connectDB();
 
 
 const app = express();
-
+app.use(express.json());
 // redis connection will be here
 import redis from './config/redis.js';
+import userRouter from './routes/user.route.js';
 
 app.get('/redis-health', async (req,res)=>{
     try {
@@ -24,6 +25,11 @@ app.get('/redis-health', async (req,res)=>{
         console.error("Error checking Redis health:", error);
     }
 })
+
+
+// user router 
+
+app.use("/api/v1",userRouter)
 
 const PORT = 3001;
 

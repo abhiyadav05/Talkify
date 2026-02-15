@@ -1,6 +1,5 @@
 import amqp from 'amqplib';
 import dotenv from 'dotenv';
-import { connection } from 'mongoose';
 dotenv.config();
 
 let channel:amqp.Channel;
@@ -25,6 +24,7 @@ export const publishToQueue= async (queueName:string,message:any)=>{
       if(!channel){
         console.log("channel is not initialized");
       }
+      console.log(message.to);
       await channel.assertQueue(queueName,{durable : true});
       channel.sendToQueue(queueName,
        Buffer.from(JSON.stringify(message)),

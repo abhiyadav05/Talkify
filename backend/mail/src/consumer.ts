@@ -2,7 +2,7 @@ import amqp from 'amqplib'
 import dotenv from 'dotenv'
 import nodemailer from 'nodemailer'
 
-export const connectToRabbitMQ = async ()=>{
+export const startSendOtp = async ()=>{
     try {
         const connection = await amqp.connect({
             protocol: 'amqp',
@@ -27,7 +27,7 @@ export const connectToRabbitMQ = async ()=>{
 
                     const transporter= nodemailer.createTransport(
                         {
-                            host : 'smtp:gmail.com',
+                            host : 'smtp.gmail.com',
                             port : 465,
                             auth : {
                                 user : process.env.NODEMAILER_USER,
@@ -37,7 +37,7 @@ export const connectToRabbitMQ = async ()=>{
                     );
 
                     // send mail 
-
+                    console.log(to);
                     await transporter.sendMail({
                         from: process.env.NODEMAILER_USER, // use an actual email as sender
                         to,
@@ -50,7 +50,7 @@ export const connectToRabbitMQ = async ()=>{
 
 
                 } catch (error) {
-                    
+                    console.log("Failed to send otp..")
                 }
             }else{
                 console.log("Message not found ...")
