@@ -3,6 +3,7 @@ import redis from "../config/redis.js";
 import { publishToQueue } from "../config/rabbitMQ.js";
 import User from "../models/user.model.js";
 import { generateToken } from "../config/jwtToken.js";
+import type { AuthenticatedRequest } from "../middlewares/userAuth.middleware.js";
 
 
 export const loginUser = async (req : Request,res : Response)=>{
@@ -95,4 +96,72 @@ export const verifyUser= async (req : Request,res : Response)=>{
         console.log("something is wrong in verifyUser...")
     }
 
+}
+
+export const getUserProfile = async (req : AuthenticatedRequest,res:Response)=>{
+    const user = req.user;
+
+    if(!user){
+        res.status(404).json({
+            message : "User not found.."
+        })
+        return ;
+    }
+    res.json(user);
+}
+
+export const updateUserName= async (req : AuthenticatedRequest,res:Response)=>{
+
+    try {
+        const user = await User.findById(req.user?._id);
+
+        if(!user){
+            res.status(404).json({
+                message : "User not found.."
+            })
+            return ;
+        }
+        user.name = req.body.name;
+        await user.save();
+
+        const token=generateToken(user);
+        res.status(200).json({
+            message : "User name updated successfully..",
+            user,
+            token
+        })
+    } catch (error) {
+        console.log("something is wrong in updateUserName...", error)
+    }
+}
+
+export const getAllExistingUser= async(req : Request, res: Response)=>{
+    
+    try {
+        const users = await User.find();
+
+        res.json(users);
+    } catch (error) {
+        
+    }
+}
+
+export const getUser = async(req:Request,res:Response)=>{
+
+    try {
+        
+        const userId=req.params.id;
+
+        const user = await User.findById(userId);
+
+        if(!user){
+            res.status(404).json({
+                message : "User not found.."
+            })
+            return ;
+        }
+        res.json(user);
+    } catch (error) {
+        console.log("something is wrong in getUser...", error)
+    }
 }
