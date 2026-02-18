@@ -84,11 +84,12 @@ export const verifyUser= async (req : Request,res : Response)=>{
     }
 
     const token=generateToken(user);
+    console.log(token);
     
     res.status(200).json({
         message : "User verified successfull..",
         user,
-        token
+        token:(await token).toString()
     })
 
 
@@ -113,8 +114,9 @@ export const getUserProfile = async (req : AuthenticatedRequest,res:Response)=>{
 export const updateUserName= async (req : AuthenticatedRequest,res:Response)=>{
 
     try {
-        const user = await User.findById(req.user?._id);
-
+        // console.log(req.user);
+        const user = await User.findById(req.user?.user?._id);
+        console.log(user);
         if(!user){
             res.status(404).json({
                 message : "User not found.."
@@ -128,7 +130,7 @@ export const updateUserName= async (req : AuthenticatedRequest,res:Response)=>{
         res.status(200).json({
             message : "User name updated successfully..",
             user,
-            token
+            token:(await token).toString()
         })
     } catch (error) {
         console.log("something is wrong in updateUserName...", error)
@@ -142,7 +144,9 @@ export const getAllExistingUser= async(req : Request, res: Response)=>{
 
         res.json(users);
     } catch (error) {
-        
+        res.status(500).json({
+            message : "Something is wrong in getAllExistingUser..."
+        })
     }
 }
 
