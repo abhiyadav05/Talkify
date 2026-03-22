@@ -3,6 +3,38 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  /* Auth: light — cool slate base + teal accent */
+  --auth-page-from: #e8eef5;
+  --auth-page-to: #e4f2f0;
+  --auth-glow-inner: rgba(13, 148, 136, 0.22);
+  --auth-glow-outer: rgba(59, 130, 246, 0.06);
+  --auth-card-bg: rgba(255, 255, 255, 0.94);
+  --auth-card-border: rgba(148, 163, 184, 0.45);
+  --auth-card-shadow: rgba(15, 23, 42, 0.06);
+  --auth-title: #0f172a;
+  --auth-body: #475569;
+  --auth-label: #334155;
+  --auth-input-bg: #ffffff;
+  --auth-input-border: #cbd5e1;
+  --auth-input-text: #0f172a;
+  --auth-input-placeholder: #94a3b8;
+  --auth-focus: #0d9488;
+  --auth-focus-ring: rgba(13, 148, 136, 0.22);
+  --auth-primary: #0d9488;
+  --auth-primary-hover: #0f766e;
+  --auth-primary-active: #115e59;
+  --auth-on-primary: #f8fafc;
+  --auth-secondary-border: #99f6e4;
+  --auth-secondary-bg-hover: rgba(204, 251, 241, 0.55);
+  --auth-secondary-text: #115e59;
+  --auth-secondary-muted: #0f766e;
+  --auth-link: #0d9488;
+  --auth-link-hover: #0f766e;
+  --auth-divider: rgba(148, 163, 184, 0.35);
+  --auth-error: #dc2626;
+  --auth-warning: #b45309;
+  --auth-timer-strong: #0f172a;
 }
 
 @theme inline {
@@ -16,6 +48,37 @@
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+
+    --auth-page-from: #0c1220;
+    --auth-page-to: #0f172a;
+    --auth-glow-inner: rgba(45, 212, 191, 0.12);
+    --auth-glow-outer: rgba(56, 189, 248, 0.05);
+    --auth-card-bg: rgba(15, 23, 42, 0.88);
+    --auth-card-border: rgba(51, 65, 85, 0.7);
+    --auth-card-shadow: rgba(0, 0, 0, 0.35);
+    --auth-title: #f1f5f9;
+    --auth-body: #94a3b8;
+    --auth-label: #cbd5e1;
+    --auth-input-bg: rgba(15, 23, 42, 0.65);
+    --auth-input-border: #475569;
+    --auth-input-text: #f8fafc;
+    --auth-input-placeholder: #64748b;
+    --auth-focus: #2dd4bf;
+    --auth-focus-ring: rgba(45, 212, 191, 0.2);
+    --auth-primary: #14b8a6;
+    --auth-primary-hover: #2dd4bf;
+    --auth-primary-active: #5eead4;
+    --auth-on-primary: #042f2e;
+    --auth-secondary-border: #334155;
+    --auth-secondary-bg-hover: rgba(51, 65, 85, 0.55);
+    --auth-secondary-text: #e2e8f0;
+    --auth-secondary-muted: #94a3b8;
+    --auth-link: #5eead4;
+    --auth-link-hover: #99f6e4;
+    --auth-divider: rgba(51, 65, 85, 0.85);
+    --auth-error: #f87171;
+    --auth-warning: #fbbf24;
+    --auth-timer-strong: #f1f5f9;
   }
 }
 
@@ -23,4 +86,213 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Auth screens: ambient motion + card entrance */
+@keyframes auth-breathe {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.75;
+    transform: scale(1.03);
+  }
+}
+
+@keyframes auth-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes auth-stagger-1 {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes auth-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20%,
+  60% {
+    transform: translateX(-6px);
+  }
+  40%,
+  80% {
+    transform: translateX(6px);
+  }
+}
+
+.auth-ambient {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.auth-ambient::before {
+  content: "";
+  position: absolute;
+  width: 140%;
+  height: 85%;
+  left: -20%;
+  top: -28%;
+  background: radial-gradient(
+    ellipse 65% 55% at 50% 0%,
+    var(--auth-glow-inner),
+    var(--auth-glow-outer) 45%,
+    transparent 72%
+  );
+  animation: auth-breathe 8s ease-in-out infinite;
+}
+
+.auth-shell {
+  min-height: 100vh;
+  background: linear-gradient(
+    165deg,
+    var(--auth-page-from) 0%,
+    var(--auth-page-to) 55%,
+    var(--auth-page-from) 100%
+  );
+  color: var(--auth-title);
+}
+
+.auth-panel {
+  border-color: var(--auth-card-border);
+  background: var(--auth-card-bg);
+  box-shadow:
+    0 1px 2px var(--auth-card-shadow),
+    0 24px 48px -12px var(--auth-card-shadow);
+}
+
+.auth-heading {
+  color: var(--auth-title);
+}
+
+.auth-muted {
+  color: var(--auth-body);
+}
+
+.auth-label {
+  color: var(--auth-label);
+}
+
+.auth-input {
+  border-color: var(--auth-input-border);
+  background: var(--auth-input-bg);
+  color: var(--auth-input-text);
+}
+
+.auth-input::placeholder {
+  color: var(--auth-input-placeholder);
+}
+
+.auth-input:hover:enabled {
+  border-color: color-mix(in srgb, var(--auth-input-border) 70%, var(--auth-focus));
+}
+
+.auth-input:focus {
+  border-color: var(--auth-focus);
+  box-shadow: 0 0 0 3px var(--auth-focus-ring);
+}
+
+.auth-btn-primary {
+  background: var(--auth-primary);
+  color: var(--auth-on-primary);
+}
+
+.auth-btn-primary:hover:not(:disabled) {
+  background: var(--auth-primary-hover);
+}
+
+.auth-btn-primary:active:not(:disabled) {
+  background: var(--auth-primary-active);
+}
+
+.auth-btn-secondary {
+  border-color: var(--auth-secondary-border);
+  color: var(--auth-secondary-text);
+  background: transparent;
+}
+
+.auth-btn-secondary:hover:not(:disabled) {
+  background: var(--auth-secondary-bg-hover);
+  border-color: var(--auth-focus);
+  color: var(--auth-secondary-muted);
+}
+
+.auth-link {
+  color: var(--auth-link);
+}
+
+.auth-link:hover {
+  color: var(--auth-link-hover);
+}
+
+.auth-divider {
+  border-color: var(--auth-divider);
+}
+
+.auth-error {
+  color: var(--auth-error);
+}
+
+.auth-warning {
+  color: var(--auth-warning);
+}
+
+.auth-timer-strong {
+  color: var(--auth-timer-strong);
+  font-weight: 600;
+}
+
+.auth-card {
+  animation: auth-card-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.auth-stagger-1 {
+  animation: auth-stagger-1 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.08s both;
+}
+
+.auth-stagger-2 {
+  animation: auth-stagger-1 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.16s both;
+}
+
+.auth-stagger-3 {
+  animation: auth-stagger-1 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.24s both;
+}
+
+.auth-error-shake {
+  animation: auth-shake 0.45s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-ambient::before,
+  .auth-card,
+  .auth-stagger-1,
+  .auth-stagger-2,
+  .auth-stagger-3,
+  .auth-error-shake {
+    animation: none;
+  }
+  .auth-card {
+    opacity: 1;
+    transform: none;
+  }
 }
