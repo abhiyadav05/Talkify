@@ -26,7 +26,7 @@ export default function LoginPage() {
       setLoading(false);
       try {
         const { data } = await axios.post(
-          `http://localhost:3000/api/v1/login`,
+          `http://localhost:3001/api/v1/login`,
           { email },
         );
         alert(data.message);

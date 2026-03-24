@@ -1,6 +1,9 @@
 import express from 'express';
 import dotenv from 'dotenv';
 dotenv.config();
+const app = express();
+import cors from 'cors';
+app.use(cors());
 
 // connection of the rabbitMQ will be here
 import {connectToRabbitMQ} from './config/rabbitMQ.js';
@@ -10,7 +13,7 @@ import connectDB from './config/db.js';
 connectDB();
 
 
-const app = express();
+
 app.use(express.json());
 // redis connection will be here
 import redis from './config/redis.js';

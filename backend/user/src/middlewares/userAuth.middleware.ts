@@ -3,7 +3,7 @@ import type { IUser } from "../models/user.model.js";
 import jwt, { type JwtPayload } from 'jsonwebtoken';
 
 export interface AuthenticatedRequest extends Request {
-    user?:IUser|null;
+    user?:JwtPayload & { id: string };
 }
 
 export const userAuth= async(req:AuthenticatedRequest,res:Response,next:NextFunction)
@@ -16,7 +16,7 @@ export const userAuth= async(req:AuthenticatedRequest,res:Response,next:NextFunc
              return;
         }
 
-        const token = header.split(' ')[1];
+        const token = header.split(' ')[1] as string;
 
         const decoded = jwt.verify(token,process.env.JWT_SECRET as string) as JwtPayload;
 
@@ -24,7 +24,7 @@ export const userAuth= async(req:AuthenticatedRequest,res:Response,next:NextFunc
              res.status(401).json({message:'Unauthorized - Invalid Token'})
              return;
         }
-        req.user = decoded as IUser;
+        req.user = decoded as JwtPayload & { id: string };
         next();
     } catch (error) {
         res.status(401).json({message:'JWT - Invalid Token'});

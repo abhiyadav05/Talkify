@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-
+import { useRouter, useSearchParams } from "next/navigation";
+import axios from "axios";
+import Cookie from 'js-cookie';
 
 const OTP_DURATION_SEC = 5 * 60;
 const RESEND_COOLDOWN_SEC = 60;
@@ -22,6 +23,8 @@ export default function VerifyPage() {
   const [resendLoading, setResendLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [errorBump, setErrorBump] = useState(0);
+  const searchParams = useSearchParams();
+  const email : string = searchParams.get("email") || "";
 
   useEffect(() => {
     const id = window.setInterval(() => {
@@ -31,8 +34,9 @@ export default function VerifyPage() {
     return () => window.clearInterval(id);
   }, []);
 
-  function handleVerify(e: React.FormEvent) {
+  async function handleVerify(e: React.FormEvent) {
     e.preventDefault();
+   
     const code = otp.replace(/\D/g, "").slice(0, 6);
     if (code.length !== 6) {
       setError("Enter the 6-digit code from your email.");
@@ -49,16 +53,51 @@ export default function VerifyPage() {
 
     setError(null);
     setLoading(true);
-    window.setTimeout(() => {
+
+    try {
+      const {data} = await axios.post("http://localhost:3001/api/v1/verify",{
+        email,
+        otp : code,
+      });
+      alert(data.message);
+      Cookie.set("token",data.token,{
+        expires : 15,
+        secure : false,
+        path : "/",
+      })
+      setOtp("");
+      router.replace("/");
+    } catch (error) {
+      setError("Invalid or expired code. Please try again.");
+    }finally {
       setLoading(false);
-      router.replace("/chat");
-    }, 500);
+    }
+
+
+
+
+    // window.setTimeout(() => {
+    //   setLoading(false);
+    //   router.replace("/chat");
+    // }, 500);
   }
 
-  function handleResend() {
+  async function handleResend() {
     if (resendLoading || resendInSec > 0) return;
     setError(null);
     setResendLoading(true);
+
+     try {
+          const {data} = await axios.post("http://localhost:3001/api/v1/login",{
+            email,
+          });
+      alert(data.message);
+     } catch (error) {
+      setError("Failed to resend OTP. Please try again.");
+     }finally{
+      setResendLoading(false);
+     }
+
     window.setTimeout(() => {
       setRemainingSec(OTP_DURATION_SEC);
       setResendInSec(RESEND_COOLDOWN_SEC);

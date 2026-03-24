@@ -115,7 +115,7 @@ export const updateUserName= async (req : AuthenticatedRequest,res:Response)=>{
 
     try {
         // console.log(req.user);
-        const user = await User.findById(req.user?.user?._id);
+        const user = await User.findById(req?.user?._id);
         console.log(user);
         if(!user){
             res.status(404).json({
